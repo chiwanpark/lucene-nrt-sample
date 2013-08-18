@@ -17,6 +17,7 @@
         <property name="indexDirectory">
             <bean class="org.apache.lucene.store.RAMDirectory"/>
         </property>
+        <property name="maxCommitCount" value="5"/>
         <property name="analyzer">
             <bean class="org.apache.lucene.analysis.standard.StandardAnalyzer">
                 <constructor-arg>

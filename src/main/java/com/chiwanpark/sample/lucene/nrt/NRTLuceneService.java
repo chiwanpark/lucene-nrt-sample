@@ -39,6 +39,9 @@ public class NRTLuceneService implements InitializingBean, DisposableBean {
 
     private long lastGeneration;
 
+    private long commitCount;
+    private long maxCommitCount;
+
     public void setAnalyzer(Analyzer analyzer) {
         this.analyzer = analyzer;
     }
@@ -55,6 +58,10 @@ public class NRTLuceneService implements InitializingBean, DisposableBean {
         this.minStaleSec = minStaleSec;
     }
 
+    public void setMaxCommitCount(long maxCommitCount) {
+        this.maxCommitCount = maxCommitCount;
+    }
+
     @Override
     public void destroy() throws Exception {
         indexReopenThread.interrupt();
@@ -66,6 +73,8 @@ public class NRTLuceneService implements InitializingBean, DisposableBean {
 
     @Override
     public void afterPropertiesSet() throws Exception {
+        commitCount = 0;
+
         logger = LoggerFactory.getLogger(this.getClass());
 
         indexWriter = new IndexWriter(indexDirectory, new IndexWriterConfig(Version.LUCENE_44, analyzer));
@@ -80,7 +89,13 @@ public class NRTLuceneService implements InitializingBean, DisposableBean {
 
     public void commit() {
         try {
-            indexWriter.commit();
+            if (commitCount > maxCommitCount) {
+                indexWriter.commit();
+                logger.debug("Committed to Lucene index.");
+                commitCount = 0;
+            }
+
+            ++commitCount;
         } catch (IOException e) {
             logger.error("Error in Lucene index commit work. {}", e.getMessage(), e);
         }
