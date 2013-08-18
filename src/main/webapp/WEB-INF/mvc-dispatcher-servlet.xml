@@ -1,0 +1,43 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
+
+    <context:annotation-config/>
+
+    <context:component-scan base-package="com.chiwanpark.sample.lucene.nrt">
+        <context:exclude-filter type="annotation" expression="org.springframework.stereotype.Service"/>
+    </context:component-scan>
+
+    <!-- JSON View Setting -->
+    <bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+        <property name="prefix" value="/WEB-INF/pages/"/>
+        <property name="suffix" value=".jsp"/>
+    </bean>
+
+    <bean class="org.springframework.web.servlet.view.ContentNegotiatingViewResolver">
+        <property name="order" value="1"/>
+        <property name="contentNegotiationManager">
+            <bean class="org.springframework.web.accept.ContentNegotiationManager">
+                <constructor-arg>
+                    <bean class="org.springframework.web.accept.PathExtensionContentNegotiationStrategy">
+                        <constructor-arg>
+                            <map>
+                                <entry key="json" value="application/json"/>
+                            </map>
+                        </constructor-arg>
+                    </bean>
+                </constructor-arg>
+            </bean>
+        </property>
+
+        <property name="defaultViews">
+            <list>
+                <bean class="org.springframework.web.servlet.view.json.MappingJacksonJsonView"/>
+            </list>
+        </property>
+    </bean>
+
+</beans>
