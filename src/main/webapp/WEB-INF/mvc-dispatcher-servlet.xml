@@ -11,6 +11,21 @@
         <context:exclude-filter type="annotation" expression="org.springframework.stereotype.Service"/>
     </context:component-scan>
 
+    <bean class="com.chiwanpark.sample.lucene.nrt.NRTLuceneService" id="luceneService">
+        <property name="maxStaleSec" value="60"/>
+        <property name="minStaleSec" value="0.1"/>
+        <property name="indexDirectory">
+            <bean class="org.apache.lucene.store.RAMDirectory"/>
+        </property>
+        <property name="analyzer">
+            <bean class="org.apache.lucene.analysis.standard.StandardAnalyzer">
+                <constructor-arg>
+                    <value type="org.apache.lucene.util.Version">LUCENE_44</value>
+                </constructor-arg>
+            </bean>
+        </property>
+    </bean>
+
     <!-- JSON View Setting -->
     <bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
         <property name="prefix" value="/WEB-INF/pages/"/>
